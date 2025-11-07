@@ -1,0 +1,28 @@
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'login_admin', media: 'all' %>
+  <% end %>
+  
+  <div class="container">
+    <div id="message-banner" class="message-banner"></div>
+    
+    <div class="login-box">
+      <h1>Admin Login</h1>
+      <%= form_with url: "/api/v1/auth_management/admin/auth/login", method: :post,
+              id: "login-form", local: true, data: { turbo: false } do |f| %>
+        <div class="form-group">
+          <%= f.email_field :email, placeholder: "Email", required: true, id: "email" %>
+        </div>
+        <div class="form-group">
+          <%= f.password_field :password, placeholder: "Password", required: true, id: "password" %>
+        </div>
+        <%= f.submit "Login", id: "login-btn" %>
+      <% end %>
+  
+      <p class="alternative-login">
+        Not an Admin?
+        <%= link_to "Customer Login", "/auth/login-customer" %>
+      </p>
+    </div>
+  </div>
+  
+  <%= javascript_include_tag 'login_admin' %>

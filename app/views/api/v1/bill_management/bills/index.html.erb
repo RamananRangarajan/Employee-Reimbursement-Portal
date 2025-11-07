@@ -1,0 +1,56 @@
+<h2>Bills</h2>
+
+<% if current_user.admin? %>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Employee</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @bills.each do |bill| %>
+        <tr>
+          <td><%= bill.id %></td>
+          <td><%= bill.employee.name %></td>
+          <td><%= number_to_currency(bill.amount) %></td>
+          <td><%= bill.status %></td>
+          <td>
+            <% if bill.status == 'pending' %>
+              <%= button_to 'Approve', approve_bill_path(bill), method: :post, class: 'btn btn-success' %>
+              <%= button_to 'Reject', reject_bill_path(bill), method: :post, class: 'btn btn-danger' %>
+            <% else %>
+              <em>No actions available</em>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <%= link_to 'Create New Bill', new_bill_path, class: 'btn btn-primary' %>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @bills.each do |bill| %>
+        <% if bill.employee_id == current_user.id %>
+          <tr>
+            <td><%= bill.id %></td>
+            <td><%= number_to_currency(bill.amount) %></td>
+            <td><%= bill.status %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

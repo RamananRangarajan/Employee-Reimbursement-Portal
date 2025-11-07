@@ -1,10 +1,41 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  use_doorkeeper
+  devise_for :users
+  # Authentication routes
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+   get 'auth/login-customer', to: 'api/v1/auth_management/customer/auth#new'
+   get 'auth/login-admin', to: 'api/v1/auth_management/admin/auth#new'
+
+  namespace :api do
+    namespace :v1 do
+      namespace :auth_management do
+        namespace :customer do
+          post 'auth/login', to: 'auth#login'
+          # get ''
+        end
+
+        namespace :admin do
+          post 'auth/login', to: 'auth#login'
+        end
+      end
+
+      namespace :employee_management  do
+        namespace :admin do
+          resources :employees
+        end
+      end
+
+      namespace :bill_management  do
+        namespace :admin do
+          resources :bills
+        end
+        namespace :customer do
+          resources :bills
+        end
+      end
+    end
+  end
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

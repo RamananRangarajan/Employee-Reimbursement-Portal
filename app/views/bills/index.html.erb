@@ -1,0 +1,56 @@
+<div class="card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1 class="card-header" style="margin: 0;">Bills</h1>
+    <% unless current_user.admin? %>
+      <%= link_to "Submit New Bill", new_bill_path, class: "btn btn-success" %>
+    <% end %>
+  </div>
+
+  <% if @bills.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Amount</th>
+          <th>Type</th>
+          <th>Status</th>
+          <% if current_user.admin? %>
+            <th>Submitted By</th>
+          <% end %>
+          <th>Submitted At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bills.each do |bill| %>
+          <tr>
+            <td><%= bill.id %></td>
+            <td>$<%= number_with_precision(bill.amount, precision: 2) %></td>
+            <td><%= bill.bill_type.capitalize %></td>
+            <td>
+              <span class="status-badge status-<%= bill.status %>">
+                <%= bill.status.capitalize %>
+              </span>
+            </td>
+            <% if current_user.admin? %>
+              <td><%= bill.employee.full_name %></td>
+            <% end %>
+            <td><%= bill.created_at.strftime("%B %d, %Y") %></td>
+            <td>
+              <div class="actions">
+                <%= link_to "View", bill, class: "btn", style: "padding: 0.5rem 1rem; font-size: 0.875rem;" %>
+                <% if current_user.admin? && bill.pending? %>
+                  <%= link_to "Approve", approve_bill_path(bill), method: :patch, class: "btn btn-success", style: "padding: 0.5rem 1rem; font-size: 0.875rem;" %>
+                  <%= link_to "Reject", reject_bill_path(bill), method: :patch, class: "btn btn-danger", style: "padding: 0.5rem 1rem; font-size: 0.875rem;" %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No bills found.</p>
+  <% end %>
+</div>
+
